@@ -23,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({ onRefresh, onExport, loading }) 
   
   <div>
     <h1 className="text-2xl font-bold text-gray-900">Relatório Exclusivo HJGP</h1>
-    <p className="text-sm text-gray-600 mt-1">Analytics de Agendamentos e Performance</p>
+    <p className="text-sm text-gray-600 mt-1">Agendamentos e Performance</p>
   </div>
 </div>
         
