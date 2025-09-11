@@ -73,37 +73,25 @@ export const useAppointments = () => {
     insurance: ''
   });
 
- const fetchAppointments = async () => {
-  setLoading(true);
-  setError(null);
-  
-  try {
-    const response = await fetch('https://sputnik-n8n.cloudfy.cloud/webhook/dashboard-data');
-    const data = await response.json();
-    setAppointments(data);
-  } catch (err) {
-    // Em caso de erro, usar dados simulados
-    const simulatedData = generateSimulatedData();
-    setAppointments(simulatedData);
-  }
-  
-  setLoading(false);
-};
+  const fetchAppointments = async () => {
+    setLoading(true);
+    setError(null);
     
-    // Fallback para dados simulados em caso de erro
-    const simulatedData = generateSimulatedData();
-    setAppointments(simulatedData);
-    setLoading(false);
-  }
-};
-    
-    // Simular delay de carregamento
-    setTimeout(() => {
-      const simulatedData = generateSimulatedData();
-      console.log('Dados simulados carregados:', simulatedData.length, 'agendamentos');
-      setAppointments(simulatedData);
-      setLoading(false);
-    }, 1000);
+    // Tentar buscar dados reais do n8n
+    fetch('https://sputnik-n8n.cloudfy.cloud/webhook/dashboard-data')
+      .then(response => response.json())
+      .then(data => {
+        console.log('Dados reais carregados:', data.length, 'agendamentos');
+        setAppointments(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log('Erro ao carregar dados reais, usando simulados:', err);
+        // Em caso de erro, usar dados simulados
+        const simulatedData = generateSimulatedData();
+        setAppointments(simulatedData);
+        setLoading(false);
+      });
   };
 
   const applyFilters = () => {
@@ -255,3 +243,4 @@ export const useAppointments = () => {
     refresh: fetchAppointments,
     exportData
   };
+};
