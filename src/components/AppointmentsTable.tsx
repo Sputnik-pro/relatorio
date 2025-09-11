@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, User, MapPin } from 'lucide-react';
 import { Appointment } from '../types';
 import { formatDateTime, formatCurrency, getStatusColor, getStatusLabel } from '../utils/formatters';
 
@@ -30,7 +30,7 @@ export const AppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                {['Data/Hora', 'Procedimento', 'Médico', 'Status', 'Valor'].map((header, i) => (
+                {['Paciente', 'Cidade', 'Data/Hora', 'Procedimento', 'Médico', 'Convênio', 'Status', 'Valor'].map((header, i) => (
                   <th key={i} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     <div className="w-20 h-4 bg-gray-200 rounded animate-pulse"></div>
                   </th>
@@ -40,7 +40,7 @@ export const AppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
             <tbody>
               {[...Array(5)].map((_, i) => (
                 <tr key={i} className="border-t border-gray-200">
-                  {[...Array(5)].map((_, j) => (
+                  {[...Array(8)].map((_, j) => (
                     <td key={j} className="px-6 py-4">
                       <div className="w-full h-4 bg-gray-100 rounded animate-pulse"></div>
                     </td>
@@ -68,6 +68,18 @@ export const AppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div className="flex items-center gap-1">
+                  <User className="w-3 h-3" />
+                  Paciente
+                </div>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  Cidade
+                </div>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Data/Hora
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -75,6 +87,9 @@ export const AppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Médico
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Convênio
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
@@ -87,13 +102,19 @@ export const AppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
           <tbody className="divide-y divide-gray-200">
             {paginatedAppointments.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                   Nenhum agendamento encontrado
                 </td>
               </tr>
             ) : (
               paginatedAppointments.map((appointment) => (
                 <tr key={appointment.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="font-medium">{appointment.patient_name}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {appointment.patient_city}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {formatDateTime(appointment.start_time)}
                   </td>
@@ -102,6 +123,9 @@ export const AppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {appointment.doctor}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {appointment.insurance}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(appointment.status)}`}>

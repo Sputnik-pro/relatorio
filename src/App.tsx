@@ -4,6 +4,7 @@ import { Filters } from './components/Filters';
 import { MetricsCards } from './components/MetricsCards';
 import { Charts } from './components/Charts';
 import { AppointmentsTable } from './components/AppointmentsTable';
+import { Reports } from './components/Reports';
 import { useAppointments } from './hooks/useAppointments';
 
 function App() {
@@ -15,6 +16,10 @@ function App() {
     setFilters,
     metrics,
     doctors,
+    cities,
+    procedures,
+    insurances,
+    reportData,
     refresh,
     exportData
   } = useAppointments();
@@ -57,12 +62,17 @@ function App() {
         filters={filters}
         onFiltersChange={setFilters}
         doctors={doctors}
+        cities={cities}
+        procedures={procedures}
+        insurances={insurances}
       />
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         <MetricsCards metrics={metrics} loading={loading} />
         
         <Charts appointments={appointments} loading={loading} />
+        
+        <Reports reportData={reportData} loading={loading} />
         
         <AppointmentsTable appointments={appointments} loading={loading} />
       </main>
