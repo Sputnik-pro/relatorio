@@ -67,6 +67,7 @@ export const useAppointments = () => {
   const [filters, setFilters] = useState<FilterState>({
     period: 30,
     doctor: '',
+    patient: '',
     status: '',
     city: '',
     procedure: '',
@@ -83,13 +84,13 @@ export const useAppointments = () => {
       .then(data => {
         console.log('Dados reais carregados:', data.length, 'agendamentos');
         // Mapear dados reais para incluir médico da pipeline se disponível
-       const mappedData = data.map((item: any) => ({
-  ...item,
-  patient_name: item.title || item.first_name || 'Paciente não informado',
-  doctor: 'A definir', // Médico será definido pela pipeline/calendário
-  patient_city: item.city || 'Cidade não informada',
-  insurance: item.insurance || 'Particular'
-}));
+        const mappedData = data.map((item: any) => ({
+          ...item,
+          patient_name: item.title || item.first_name || 'Paciente não informado',
+          doctor: 'A definir', // Médico será definido pela pipeline/calendário
+          patient_city: item.city || 'Cidade não informada',
+          insurance: item.insurance || 'Particular'
+        }));
         setAppointments(mappedData);
         setLoading(false);
       })
@@ -113,6 +114,11 @@ export const useAppointments = () => {
     // Filtro de médico
     if (filters.doctor) {
       filtered = filtered.filter(apt => apt.doctor === filters.doctor);
+    }
+    
+    // Filtro de paciente
+    if (filters.patient) {
+      filtered = filtered.filter(apt => apt.patient_name === filters.patient);
     }
     
     // Filtro de status
@@ -174,6 +180,11 @@ export const useAppointments = () => {
   const getInsurances = (): string[] => {
     const insurances = [...new Set(appointments.map(apt => apt.insurance))];
     return insurances.sort();
+  };
+
+  const getPatients = (): string[] => {
+    const patients = [...new Set(appointments.map(apt => apt.patient_name))];
+    return patients.filter(Boolean).sort();
   };
 
   const getReportData = (): ReportData => {
@@ -243,6 +254,7 @@ export const useAppointments = () => {
     cities: getCities(),
     procedures: getProcedures(),
     insurances: getInsurances(),
+    patients: getPatients(),
     reportData: getReportData(),
     refresh: fetchAppointments,
     exportData
