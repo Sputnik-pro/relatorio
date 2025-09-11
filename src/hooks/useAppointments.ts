@@ -74,8 +74,30 @@ export const useAppointments = () => {
   });
 
   const fetchAppointments = async () => {
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
+  
+  try {
+    const response = await fetch('https://sputnik-n8n.cloudfy.cloud/webhook/dashboard-data');
+    
+    if (!response.ok) {
+      throw new Error(`Erro ${response.status}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Dados reais carregados:', data.length, 'agendamentos');
+    setAppointments(data);
+    setLoading(false);
+  } catch (err) {
+    console.error('Erro ao carregar dados:', err);
+    setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
+    
+    // Fallback para dados simulados em caso de erro
+    const simulatedData = generateSimulatedData();
+    setAppointments(simulatedData);
+    setLoading(false);
+  }
+};
     
     // Simular delay de carregamento
     setTimeout(() => {
