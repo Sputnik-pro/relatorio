@@ -27,9 +27,9 @@ const generateSimulatedData = (): Appointment[] => {
 
   const appointments: Appointment[] = [];
   
-  // Gerar 100 agendamentos dos últimos 90 dias
-  for (let i = 0; i < 100; i++) {
-    const daysAgo = Math.floor(Math.random() * 90);
+  // Gerar 200 agendamentos dos últimos 180 dias
+  for (let i = 0; i < 200; i++) {
+    const daysAgo = Math.floor(Math.random() * 180);
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - daysAgo);
     startDate.setHours(8 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 60), 0, 0);
@@ -82,7 +82,16 @@ export const useAppointments = () => {
       .then(response => response.json())
       .then(data => {
         console.log('Dados reais carregados:', data.length, 'agendamentos');
-        setAppointments(data);
+        // Mapear dados reais para incluir médico da pipeline se disponível
+        const mappedData = data.map((item: any) => ({
+          ...item,
+          // Se não tem doctor definido ou é o paciente, usar procedure_type como referência
+          doctor: item.doctor && item.doctor !== item.patient_name ? item.doctor : 'A definir',
+          patient_name: item.title || 'Paciente não informado',
+          patient_city: item.city || 'Cidade não informada',
+          insurance: item.insurance || 'Particular'
+        }));
+        setAppointments(mappedData);
         setLoading(false);
       })
       .catch(err => {
@@ -136,15 +145,12 @@ export const useAppointments = () => {
     const noShow = filteredAppointments.filter(apt => apt.status === 'noshow').length;
     const cancelled = filteredAppointments.filter(apt => apt.status === 'cancelled').length;
     const scheduled = filteredAppointments.filter(apt => apt.status === 'confirmed').length;
-    const totalRevenue = filteredAppointments
-      .filter(apt => apt.status === 'completed')
-      .reduce((sum, apt) => sum + parseFloat(apt.value), 0);
     
     return {
       total,
       completionRate: total > 0 ? (completed / total) * 100 : 0,
       noShowRate: total > 0 ? (noShow / total) * 100 : 0,
-      totalRevenue,
+      totalRevenue: 0, // Removido cálculo de receita
       scheduledSurgeries: scheduled,
       completedSurgeries: completed,
       cancelledSurgeries: cancelled
@@ -206,11 +212,10 @@ export const useAppointments = () => {
       apt.doctor,
       apt.insurance,
       apt.status,
-      apt.cancellation_reason || '',
-      `R$ ${parseFloat(apt.value).toFixed(2).replace('.', ',')}`
+      apt.cancellation_reason || ''
     ]);
     
-    const headers = ['Paciente', 'Cidade', 'Data/Hora', 'Procedimento', 'Médico', 'Convênio', 'Status', 'Motivo Cancelamento', 'Valor'];
+    const headers = ['Paciente', 'Cidade', 'Data/Hora', 'Procedimento', 'Médico', 'Convênio', 'Status', 'Motivo Cancelamento'];
     const csvContent = [headers, ...csvData].map(row => row.join(',')).join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
