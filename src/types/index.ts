@@ -15,6 +15,7 @@ export interface Appointment {
 export interface FilterState {
   period: number;
   doctor: string;
+  patient: string;
   status: string;
   city: string;
   procedure: string;
