@@ -18,11 +18,15 @@ export const Filters: React.FC<FiltersProps> = ({
   procedures, 
   insurances 
 }) => {
-  const periodOptions = [
+const periodOptions = [
     { value: 7, label: '7 dias' },
     { value: 15, label: '15 dias' },
     { value: 30, label: '30 dias' },
-    { value: 90, label: '90 dias' }
+    { value: 60, label: '60 dias' },
+    { value: 90, label: '90 dias' },
+    { value: 120, label: '120 dias' },
+    { value: 180, label: '180 dias' },
+    { value: 365, label: '1 ano' }
   ];
 
   const statusOptions = [
