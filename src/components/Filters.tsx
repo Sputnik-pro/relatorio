@@ -20,7 +20,7 @@ export const Filters: React.FC<FiltersProps> = ({
   insurances,
   patients
 }) => {
-const periodOptions = [
+  const periodOptions = [
     { value: 7, label: '7 dias' },
     { value: 15, label: '15 dias' },
     { value: 30, label: '30 dias' },
@@ -42,7 +42,7 @@ const periodOptions = [
   return (
     <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
           <div>
             <label htmlFor="period" className="block text-sm font-medium text-gray-700 mb-2">
               Período
@@ -79,24 +79,26 @@ const periodOptions = [
               ))}
             </select>
           </div>
-<div>
-  <label htmlFor="patient" className="block text-sm font-medium text-gray-700 mb-2">
-    Paciente
-  </label>
-  <select
-    id="patient"
-    value={filters.patient || ''}
-    onChange={(e) => onFiltersChange({ ...filters, patient: e.target.value })}
-    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-  >
-    <option value="">Todos os pacientes</option>
-    {patients.map(patient => (
-      <option key={patient} value={patient}>
-        {patient}
-      </option>
-    ))}
-  </select>
-</div>
+
+          <div>
+            <label htmlFor="patient" className="block text-sm font-medium text-gray-700 mb-2">
+              Paciente
+            </label>
+            <select
+              id="patient"
+              value={filters.patient || ''}
+              onChange={(e) => onFiltersChange({ ...filters, patient: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Todos os pacientes</option>
+              {patients.map(patient => (
+                <option key={patient} value={patient}>
+                  {patient}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
               Status
