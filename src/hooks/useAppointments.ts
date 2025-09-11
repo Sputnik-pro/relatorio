@@ -83,14 +83,13 @@ export const useAppointments = () => {
       .then(data => {
         console.log('Dados reais carregados:', data.length, 'agendamentos');
         // Mapear dados reais para incluir médico da pipeline se disponível
-        const mappedData = data.map((item: any) => ({
-          ...item,
-          // Se não tem doctor definido ou é o paciente, usar procedure_type como referência
-          doctor: item.doctor && item.doctor !== item.patient_name ? item.doctor : 'A definir',
-          patient_name: item.title || 'Paciente não informado',
-          patient_city: item.city || 'Cidade não informada',
-          insurance: item.insurance || 'Particular'
-        }));
+       const mappedData = data.map((item: any) => ({
+  ...item,
+  patient_name: item.title || item.first_name || 'Paciente não informado',
+  doctor: 'A definir', // Médico será definido pela pipeline/calendário
+  patient_city: item.city || 'Cidade não informada',
+  insurance: item.insurance || 'Particular'
+}));
         setAppointments(mappedData);
         setLoading(false);
       })
