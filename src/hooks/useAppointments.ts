@@ -257,4 +257,3 @@ export const useAppointments = () => {
     refresh: fetchAppointments,
     exportData
   };
-};
