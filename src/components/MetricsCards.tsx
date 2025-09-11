@@ -58,14 +58,6 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) 
       bgColor: 'bg-orange-50',
       borderColor: 'border-orange-200'
     },
-    {
-      title: 'Receita Total',
-      value: formatCurrency(metrics.totalRevenue),
-      icon: DollarSign,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200'
-    }
   ];
 
   if (loading) {
