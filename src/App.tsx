@@ -19,6 +19,7 @@ function App() {
     cities,
     procedures,
     insurances,
+    patients,
     reportData,
     refresh,
     exportData
