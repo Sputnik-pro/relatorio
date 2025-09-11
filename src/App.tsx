@@ -58,14 +58,15 @@ function App() {
         loading={loading}
       />
       
-      <Filters
-        filters={filters}
-        onFiltersChange={setFilters}
-        doctors={doctors}
-        cities={cities}
-        procedures={procedures}
-        insurances={insurances}
-      />
+     <Filters
+  filters={filters}
+  onFiltersChange={setFilters}
+  doctors={doctors}
+  cities={cities}
+  procedures={procedures}
+  insurances={insurances}
+  patients={patients}
+/>
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         <MetricsCards metrics={metrics} loading={loading} />
