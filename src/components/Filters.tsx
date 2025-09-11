@@ -8,6 +8,7 @@ interface FiltersProps {
   cities: string[];
   procedures: string[];
   insurances: string[];
+  patients: string[];
 }
 
 export const Filters: React.FC<FiltersProps> = ({ 
@@ -16,7 +17,8 @@ export const Filters: React.FC<FiltersProps> = ({
   doctors, 
   cities, 
   procedures, 
-  insurances 
+  insurances,
+  patients
 }) => {
 const periodOptions = [
     { value: 7, label: '7 dias' },
@@ -77,7 +79,24 @@ const periodOptions = [
               ))}
             </select>
           </div>
-
+<div>
+  <label htmlFor="patient" className="block text-sm font-medium text-gray-700 mb-2">
+    Paciente
+  </label>
+  <select
+    id="patient"
+    value={filters.patient || ''}
+    onChange={(e) => onFiltersChange({ ...filters, patient: e.target.value })}
+    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+  >
+    <option value="">Todos os pacientes</option>
+    {patients.map(patient => (
+      <option key={patient} value={patient}>
+        {patient}
+      </option>
+    ))}
+  </select>
+</div>
           <div>
             <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
               Status
