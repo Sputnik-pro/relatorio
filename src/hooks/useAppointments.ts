@@ -213,4 +213,3 @@ const fetchAppointments = async () => {
     refresh: fetchAppointments,
     exportData
   };
-};
