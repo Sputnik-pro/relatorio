@@ -1,63 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Appointment, FilterState, Metrics, ReportData } from '../types';
 
-// Dados simulados para teste
-const generateSimulatedData = (): Appointment[] => {
-  const doctors = ['Dr. Maria Silva', 'Dr. João Santos', 'Dr. Ana Costa', 'Dr. Pedro Lima', 'Dr. Carla Mendes'];
-  const procedures = ['Abdominoplastia', 'Rinoplastia', 'Lipoaspiração', 'Mamoplastia', 'Consulta', 'Blefaroplastia', 'Otoplastia'];
-  const statuses: Array<'confirmed' | 'cancelled' | 'noshow' | 'completed'> = ['confirmed', 'cancelled', 'noshow', 'completed'];
-  const values = ['200.00', '500.00', '800.00', '1200.00', '1500.00', '2000.00', '2500.00', '3000.00', '3500.00'];
-  const cities = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Salvador', 'Brasília', 'Fortaleza', 'Recife', 'Porto Alegre', 'Curitiba', 'Goiânia'];
-  const insurances = ['Particular', 'Unimed', 'Bradesco Saúde', 'Amil', 'SulAmérica', 'Hapvida', 'NotreDame', 'Prevent Senior'];
-  const patientNames = [
-    'Ana Carolina Silva', 'João Pedro Santos', 'Maria Fernanda Costa', 'Carlos Eduardo Lima', 'Juliana Mendes',
-    'Rafael Oliveira', 'Camila Rodrigues', 'Bruno Almeida', 'Larissa Ferreira', 'Diego Martins',
-    'Gabriela Souza', 'Lucas Pereira', 'Amanda Ribeiro', 'Thiago Barbosa', 'Natália Cardoso',
-    'Felipe Araújo', 'Isabela Nascimento', 'Gustavo Rocha', 'Letícia Dias', 'Mateus Gomes'
-  ];
-  const cancellationReasons = [
-    'Paciente solicitou cancelamento',
-    'Problema de saúde do paciente',
-    'Reagendamento médico',
-    'Falta de documentação',
-    'Problema com convênio',
-    'Emergência familiar',
-    'Condições climáticas'
-  ];
-
-  const appointments: Appointment[] = [];
-  
-  // Gerar 200 agendamentos dos últimos 180 dias
-  for (let i = 0; i < 200; i++) {
-    const daysAgo = Math.floor(Math.random() * 180);
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - daysAgo);
-    startDate.setHours(8 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 60), 0, 0);
-    
-    const endDate = new Date(startDate);
-    endDate.setMinutes(endDate.getMinutes() + 30 + Math.floor(Math.random() * 60));
-    
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-
-    appointments.push({
-      id: `apt_${i + 1}`,
-      patient_name: patientNames[Math.floor(Math.random() * patientNames.length)],
-      patient_city: cities[Math.floor(Math.random() * cities.length)],
-      start_time: startDate.toISOString(),
-      end_time: endDate.toISOString(),
-      status,
-      doctor: doctors[Math.floor(Math.random() * doctors.length)],
-      procedure_type: procedures[Math.floor(Math.random() * procedures.length)],
-      value: values[Math.floor(Math.random() * values.length)],
-      insurance: insurances[Math.floor(Math.random() * insurances.length)],
-      cancellation_reason: status === 'cancelled' ? cancellationReasons[Math.floor(Math.random() * cancellationReasons.length)] : undefined
-    });
-  }
-
-  // Ordenar por data (mais recentes primeiro)
-  return appointments.sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime());
-};
-
 export const useAppointments = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
@@ -106,7 +49,7 @@ export const useAppointments = () => {
         setError('Erro ao carregar dados dos agendamentos');
         setLoading(false);
       });
-};
+  };
 
   const applyFilters = () => {
     let filtered = [...appointments];
@@ -114,7 +57,7 @@ export const useAppointments = () => {
     // Filtro de período
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - filters.period);
-    filtered = filtered.filter(apt => new Date(apt.start_time) >= cutoffDate);
+    filtered = filtered.filter(apt => new Date(apt.created_at) >= cutoffDate);
     
     // Filtro de médico
     if (filters.doctor) {
@@ -128,17 +71,17 @@ export const useAppointments = () => {
     
     // Filtro de status
     if (filters.status) {
-      filtered = filtered.filter(apt => apt.status === filters.status);
+      filtered = filtered.filter(apt => apt.appointment_status === filters.status);
     }
     
     // Filtro de cidade
     if (filters.city) {
-      filtered = filtered.filter(apt => apt.patient_city === filters.city);
+      filtered = filtered.filter(apt => apt.city === filters.city);
     }
     
     // Filtro de procedimento
     if (filters.procedure) {
-      filtered = filtered.filter(apt => apt.procedure_type === filters.procedure);
+      filtered = filtered.filter(apt => apt.procedure === filters.procedure);
     }
     
     // Filtro de convênio
@@ -151,16 +94,16 @@ export const useAppointments = () => {
 
   const calculateMetrics = (): Metrics => {
     const total = filteredAppointments.length;
-    const completed = filteredAppointments.filter(apt => apt.status === 'completed').length;
-    const noShow = filteredAppointments.filter(apt => apt.status === 'noshow').length;
-    const cancelled = filteredAppointments.filter(apt => apt.status === 'cancelled').length;
-    const scheduled = filteredAppointments.filter(apt => apt.status === 'confirmed').length;
+    const completed = filteredAppointments.filter(apt => apt.appointment_status === 'Concluída - Compareceu').length;
+    const noShow = filteredAppointments.filter(apt => apt.appointment_status === 'Não Compareceu').length;
+    const cancelled = filteredAppointments.filter(apt => apt.appointment_status === 'Cancelada').length;
+    const scheduled = filteredAppointments.filter(apt => apt.appointment_status === 'Confirmada').length;
     
     return {
       total,
       completionRate: total > 0 ? (completed / total) * 100 : 0,
       noShowRate: total > 0 ? (noShow / total) * 100 : 0,
-      totalRevenue: 0, // Removido cálculo de receita
+      totalRevenue: 0,
       scheduledSurgeries: scheduled,
       completedSurgeries: completed,
       cancelledSurgeries: cancelled
@@ -169,22 +112,22 @@ export const useAppointments = () => {
 
   const getDoctors = (): string[] => {
     const doctors = [...new Set(appointments.map(apt => apt.doctor))];
-    return doctors.sort();
+    return doctors.filter(doctor => doctor && doctor !== 'A definir').sort();
   };
 
   const getCities = (): string[] => {
-    const cities = [...new Set(appointments.map(apt => apt.patient_city))];
-    return cities.sort();
+    const cities = [...new Set(appointments.map(apt => apt.city))];
+    return cities.filter(Boolean).sort();
   };
 
   const getProcedures = (): string[] => {
-    const procedures = [...new Set(appointments.map(apt => apt.procedure_type))];
-    return procedures.sort();
+    const procedures = [...new Set(appointments.map(apt => apt.procedure))];
+    return procedures.filter(Boolean).sort();
   };
 
   const getInsurances = (): string[] => {
     const insurances = [...new Set(appointments.map(apt => apt.insurance))];
-    return insurances.sort();
+    return insurances.filter(Boolean).sort();
   };
 
   const getPatients = (): string[] => {
@@ -193,18 +136,13 @@ export const useAppointments = () => {
   };
 
   const getReportData = (): ReportData => {
-    const scheduledSurgeries = filteredAppointments.filter(apt => apt.status === 'confirmed');
-    const completedSurgeries = filteredAppointments.filter(apt => apt.status === 'completed');
-    const cancelledSurgeries = filteredAppointments.filter(apt => apt.status === 'cancelled');
+    const scheduledSurgeries = filteredAppointments.filter(apt => apt.appointment_status === 'Confirmada');
+    const completedSurgeries = filteredAppointments.filter(apt => apt.appointment_status === 'Concluída - Compareceu');
+    const cancelledSurgeries = filteredAppointments.filter(apt => apt.appointment_status === 'Cancelada');
     
     const proceduresSummary = filteredAppointments.reduce((acc, apt) => {
-      acc[apt.procedure_type] = (acc[apt.procedure_type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    const cancellationReasons = cancelledSurgeries.reduce((acc, apt) => {
-      if (apt.cancellation_reason) {
-        acc[apt.cancellation_reason] = (acc[apt.cancellation_reason] || 0) + 1;
+      if (apt.procedure) {
+        acc[apt.procedure] = (acc[apt.procedure] || 0) + 1;
       }
       return acc;
     }, {} as Record<string, number>);
@@ -214,23 +152,22 @@ export const useAppointments = () => {
       completedSurgeries,
       cancelledSurgeries,
       proceduresSummary,
-      cancellationReasons
+      cancellationReasons: {}
     };
   };
 
   const exportData = () => {
     const csvData = filteredAppointments.map(apt => [
       apt.patient_name,
-      apt.patient_city,
-      new Date(apt.start_time).toLocaleString('pt-BR'),
-      apt.procedure_type,
+      apt.city,
+      new Date(apt.created_at).toLocaleString('pt-BR'),
+      apt.procedure,
       apt.doctor,
       apt.insurance,
-      apt.status,
-      apt.cancellation_reason || ''
+      apt.appointment_status
     ]);
     
-    const headers = ['Paciente', 'Cidade', 'Data/Hora', 'Procedimento', 'Médico', 'Convênio', 'Status', 'Motivo Cancelamento'];
+    const headers = ['Paciente', 'Cidade', 'Data/Hora', 'Procedimento', 'Médico', 'Convênio', 'Status'];
     const csvContent = [headers, ...csvData].map(row => row.join(',')).join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
