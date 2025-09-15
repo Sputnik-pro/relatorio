@@ -197,7 +197,7 @@ const fetchAppointments = async () => {
     applyFilters();
   }, [appointments, filters]);
 
-  return {
+ return {
     appointments: filteredAppointments,
     loading,
     error,
@@ -213,3 +213,4 @@ const fetchAppointments = async () => {
     refresh: fetchAppointments,
     exportData
   };
+};
