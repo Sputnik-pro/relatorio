@@ -110,11 +110,11 @@ export const Filters: React.FC<FiltersProps> = ({
               onChange={(e) => onFiltersChange({ ...filters, status: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              {statusOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+             {statusOptions.map(option => (
+  <option key={option} value={option}>
+    {option}
+  </option>
+))}
             </select>
           </div>
 
