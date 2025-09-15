@@ -78,30 +78,35 @@ export const useAppointments = () => {
     setLoading(true);
     setError(null);
     
-    // Tentar buscar dados reais do n8n
+    // Buscar dados reais do n8n
     fetch('https://sputnik-n8n.cloudfy.cloud/webhook/dashboard-data')
       .then(response => response.json())
       .then(data => {
         console.log('Dados reais carregados:', data.length, 'agendamentos');
-        // Mapear dados reais para incluir médico da pipeline se disponível
+        
+        // Mapear dados corretos da nossa API
         const mappedData = data.map((item: any) => ({
-          ...item,
-          patient_name: item.title || item.first_name || 'Paciente não informado',
-          doctor: 'A definir', // Médico será definido pela pipeline/calendário
-          patient_city: item.city || 'Cidade não informada',
-          insurance: item.insurance || 'Particular'
+          opportunity_id: item.opportunity_id,
+          patient_name: item.patient_name,
+          doctor: item.doctor || 'A definir',
+          city: item.city,
+          procedure: item.procedure,
+          insurance: item.insurance,
+          appointment_status: item.appointment_status,
+          phone: item.phone,
+          created_at: item.created_at,
+          updated_at: item.updated_at
         }));
+        
         setAppointments(mappedData);
         setLoading(false);
       })
-      .catch(err => {
-        console.log('Erro ao carregar dados reais, usando simulados:', err);
-        // Em caso de erro, usar dados simulados
-        const simulatedData = generateSimulatedData();
-        setAppointments(simulatedData);
+      .catch(error => {
+        console.error('Erro ao carregar dados:', error);
+        setError('Erro ao carregar dados dos agendamentos');
         setLoading(false);
       });
-  };
+};
 
   const applyFilters = () => {
     let filtered = [...appointments];
