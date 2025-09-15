@@ -31,13 +31,14 @@ export const Filters: React.FC<FiltersProps> = ({
     { value: 365, label: '1 ano' }
   ];
 
-  const statusOptions = [
-    { value: '', label: 'Todos os status' },
-    { value: 'confirmed', label: 'Confirmado' },
-    { value: 'completed', label: 'Realizado' },
-    { value: 'cancelled', label: 'Cancelado' },
-    { value: 'noshow', label: 'Faltou' }
-  ];
+ const statusOptions = [
+  'Não Confirmada',
+  'Confirmada', 
+  'Concluída - Compareceu',
+  'Cancelada',
+  'Não Compareceu',
+  'Pós Cirurgia'
+];
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
