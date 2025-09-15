@@ -31,7 +31,7 @@ export const useAppointments = () => {
         const mappedData = data.map((item: any) => ({
           opportunity_id: item.opportunity_id,
           patient_name: item.patient_name,
-          doctor: item.doctor || 'A definir',
+          doctor: item.doctor || 'Médico não definido',
           city: item.city,
           procedure: item.procedure,
           insurance: item.insurance,
