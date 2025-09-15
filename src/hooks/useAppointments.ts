@@ -22,34 +22,46 @@ export const useAppointments = () => {
     setError(null);
     
     // Buscar dados reais do n8n
-    fetch('https://sputnik-n8n.cloudfy.cloud/webhook/dashboard-data')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Dados reais carregados:', data.length, 'agendamentos');
-        
-        // Mapear dados corretos da nossa API
-        const mappedData = data.map((item: any) => ({
-          opportunity_id: item.opportunity_id,
-          patient_name: item.patient_name,
-          doctor: item.doctor || 'Médico não definido',
-          city: item.city,
-          procedure: item.procedure,
-          insurance: item.insurance,
-          appointment_status: item.appointment_status,
-          phone: item.phone,
-          created_at: item.created_at,
-          updated_at: item.updated_at
-        }));
-        
-        setAppointments(mappedData);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Erro ao carregar dados:', error);
-        setError('Erro ao carregar dados dos agendamentos');
-        setLoading(false);
-      });
-  };
+const fetchAppointments = async () => {
+  setLoading(true);
+  setError(null);
+  
+  try {
+    const response = await fetch('https://sputnik-n8n.cloudfy.cloud/webhook/dashboard-data');
+    const data = await response.json();
+    
+    console.log('Dados API:', data);
+    
+    // Mapear dados com fallbacks
+    const mappedData = data.map((item: any) => ({
+      id: item.opportunity_id,
+      opportunity_id: item.opportunity_id,
+      patient_name: item.patient_name,
+      doctor: item.doctor && item.doctor.trim() !== '' ? item.doctor : 'Médico não definido',
+      city: item.city && item.city.trim() !== '' ? item.city : 'Cidade não informada',
+      procedure: item.procedure && item.procedure.trim() !== '' ? item.procedure : 'Procedimento não informado',
+      insurance: item.insurance && item.insurance.trim() !== '' ? item.insurance : 'Convênio não informado',
+      appointment_status: item.appointment_status || 'Status não definido',
+      phone: item.phone,
+      created_at: item.created_at || new Date().toISOString(),
+      updated_at: item.updated_at || new Date().toISOString(),
+      // Campos compatíveis com interface antiga
+      patient_city: item.city,
+      procedure_type: item.procedure,
+      status: item.appointment_status,
+      start_time: item.created_at
+    }));
+    
+    console.log('Dados mapeados:', mappedData);
+    setAppointments(mappedData);
+    setLoading(false);
+    
+  } catch (error) {
+    console.error('Erro:', error);
+    setError('Erro ao carregar dados');
+    setLoading(false);
+  }
+};
 
   const applyFilters = () => {
     let filtered = [...appointments];
